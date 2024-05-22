@@ -1,50 +1,57 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#define MAX_VERTICES 100
-
-void dfs(int graph[][MAX_VERTICES], int vertices, int start);
-
-int main() {
-    int vertices, edges;
-    printf("Enter the number of vertices and edges: ");
-    scanf("%d %d", &vertices, &edges);
-
-    int graph[MAX_VERTICES][MAX_VERTICES] = {0};
-
-    printf("Enter the edges (source destination): \n");
-    for (int i = 0; i < edges; i++) {
-        int src, dest;
-        scanf("%d %d", &src, &dest);
-        graph[src][dest] = 1;
-        graph[dest][src] = 1; // For undirected graph
-    }
-
-    int start;
-    printf("Enter the start vertex: ");
-    scanf("%d", &start);
-
-    dfs(graph, vertices, start);
-
-    return 0;
-}
-
-void dfs(int graph[][MAX_VERTICES], int vertices, int start) {
-    int visited[MAX_VERTICES] = {0};
-    int stack[MAX_VERTICES], top = -1;
+void dfs(int **graph, int vertices, int start) {
+    int *visited = (int *)calloc(vertices, sizeof(int));
+    int *stack = (int *)malloc(vertices * sizeof(int));
+    int top = -1;
 
     stack[++top] = start;
+    visited[start] = 1;
 
     while (top >= 0) {
         int current = stack[top--];
-        if (!visited[current]) {
-            visited[current] = 1;
-            printf("%d ", current);
+        printf("%d ", current);
 
-            for (int i = vertices - 1; i >= 0; i--) {
-                if (graph[current][i] && !visited[i]) {
-                    stack[++top] = i;
-                }
+        for (int i = vertices - 1; i >= 0; i--) {
+            if (graph[current][i] && !visited[i]) {
+                stack[++top] = i;
+                visited[i] = 1;
             }
         }
     }
+
+    free(visited);
+    free(stack);
+}
+
+int main() {
+    int vertices, start;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    int **graph = (int **)malloc(vertices * sizeof(int *));
+    for (int i = 0; i < vertices; i++) {
+        graph[i] = (int *)malloc(vertices * sizeof(int));
+    }
+
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    printf("Enter the start vertex: ");
+    scanf("%d", &start);
+
+    printf("DFS starting from vertex %d:\n", start);
+    dfs(graph, vertices, start);
+
+    for (int i = 0; i < vertices; i++) {
+        free(graph[i]);
+    }
+    free(graph);
+
+    return 0;
 }
