@@ -1,34 +1,45 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_VERTICES 100
 
-void bfs(int graph[][MAX_VERTICES], int vertices, int start);
+void bfs(int **graph, int vertices, int start);
 
 int main() {
-    int vertices, edges;
-    printf("Enter the number of vertices and edges: ");
-    scanf("%d %d", &vertices, &edges);
+    int vertices;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
 
-    int graph[MAX_VERTICES][MAX_VERTICES] = {0};
+    // Dynamically allocate memory for the adjacency matrix
+    int **graph = (int **)malloc(vertices * sizeof(int *));
+    for (int i = 0; i < vertices; i++) {
+        graph[i] = (int *)malloc(vertices * sizeof(int));
+    }
 
-    printf("Enter the edges (source destination): \n");
-    for (int i = 0; i < edges; i++) {
-        int src, dest;
-        scanf("%d %d", &src, &dest);
-        graph[src][dest] = 1;
-        graph[dest][src] = 1; // For undirected graph
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            scanf("%d", &graph[i][j]);
+        }
     }
 
     int start;
     printf("Enter the start vertex: ");
     scanf("%d", &start);
 
+    printf("BFS starting from vertex %d:\n", start);
     bfs(graph, vertices, start);
+
+    // Free the allocated memory
+    for (int i = 0; i < vertices; i++) {
+        free(graph[i]);
+    }
+    free(graph);
 
     return 0;
 }
 
-void bfs(int graph[][MAX_VERTICES], int vertices, int start) {
+void bfs(int **graph, int vertices, int start) {
     int visited[MAX_VERTICES] = {0};
     int queue[MAX_VERTICES], front = 0, rear = 0;
 
@@ -46,4 +57,5 @@ void bfs(int graph[][MAX_VERTICES], int vertices, int start) {
             }
         }
     }
+    printf("\n");
 }
